@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>SPI Test 1</title>
+        <meta name="viewport" content="width=device-width">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="http://api.sandboxd.com/js/1.0-1.0.18/spi.min.js"></script>
+        <script>
+        	$(function () {
+        		function log (str) {
+        			$("#log").append(str + "<br />");
+        		}
+        		
+        		function asynchErrorResponse (errObj) {
+        			log(errObj.errorCode + ": " + errObj.errorString);
+        		}
+        		
+        		function asynchUserResponse (data) {
+            		log("Got user with name " + data.name);
+        		}
+        		
+        		function fetchUser (uid, sid, ip, asynch) {
+        			try {
+        				log("Fetching user " + uid + "...");
+        				var data = SPI.getUser(uid, sid, ip, asynch);
+        				if (data != null) asynchUserResponse(data);
+            		} catch (e) {
+            			asynchErrorResponse(e);
+            		}
+        		}
+        		
+        		function asynchGroupResponse (data) {
+            		log("Got group with name " + data.name);
+        		}
+        		
+        		function fetchGroup (gid, asynch) {
+        			try {
+        				log("Fetching group " + gid + "...");
+        				var data = SPI.getGroup(gid, asynch);
+        				if (data != null) asynchGroupResponse(data);
+            		} catch (e) {
+            			asynchErrorResponse(e);
+            		}
+        		}
+        		
+        		function asynchAchievementResponse (data) {
+            		log("Achievement set successfully.");
+        		}
+        		
+        		function setAchievement (uid, sid, key, value, asynch) {
+        			try {
+        				log("Setting achievement for user uid " + uid + ". Key = " + key + ", Value = " + value + "...");
+        				var data = SPI.setAchievement(uid, sid, key, value, asynch);
+        				if (data != null) asynchAchievementResponse(data);
+            		} catch (e) {
+            			asynchErrorResponse(e);
+            		}
+        		}
+        		
+        		function asynchStatResponse (data) {
+            		log("Achievement set successfully.");
+        		}
+        		
+        		function setStat (uid, sid, key, value, asynch) {
+        			try {
+        				log("Setting stat for user uid " + uid + ". Key = " + key + ", Value = " + value + "...");
+        				var data = SPI.setAchievement(uid, sid, key, value, asynch);
+        				if (data != null) asynchStatResponse(data);
+            		} catch (e) {
+            			asynchErrorResponse(e);
+            		}
+        		}
+        		
+        		SPI.init("http://www.dev.sandboxd.com/spi", 2, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        		var asynch = {response:asynchUserResponse, error:asynchErrorResponse};
+        		log("=====Testing getUser=====");
+        		log("Executing Synchronous Calls...");
+        		fetchUser(0);
+        		fetchUser(1);
+        		fetchUser(1, "bad sid");
+        		fetchUser(2);
+        		fetchUser(200);
+        		log("");
+				
+        		log("Executing Asynchronous Calls...");
+        		fetchUser(0, null, null, asynch);
+        		fetchUser(1, null, null, asynch);
+        		fetchUser(1, "bad sid", null, asynch);
+        		fetchUser(2, null, null, asynch);
+        		fetchUser(200, null, null, asynch);
+        		log("");
+
+        		asynch = {response:asynchGroupResponse, error:asynchErrorResponse};
+        		log("=====Testing getGroup=====");
+        		log("Executing Synchronous Calls...");
+        		fetchGroup(0);
+        		fetchGroup(1);
+        		fetchGroup(1);
+        		fetchGroup(2);
+        		fetchGroup(200);
+        		log("");
+				
+        		log("Executing Asynchronous Calls...");
+        		fetchGroup(0, asynch);
+        		fetchGroup(1, asynch);
+        		fetchGroup(1, asynch);
+        		fetchGroup(2, asynch);
+        		fetchGroup(200, asynch);
+        	});
+        </script>
+    </head>
+    <body>
+    	<div id="log"></div>
+    </body>
+</html>
