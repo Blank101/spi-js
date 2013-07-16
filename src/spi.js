@@ -289,19 +289,17 @@ var SPI = function () {
 		 * 
 		 * @param {Number} uid The user id for the user object you want to retrieve.
 		 * @param {String} [sid] The session id of this user. This is used to verify the user and get the microids that the user has purchased.
-		 * @param {String} [ip] The user's public ip address. Used as an additional security measure.
 		 * @param [asynch] An optional object which contains both a response and error value which act as callbacks for asynchronous communication. If not specified then the call is synchronous.
 		 * 
 		 * @returns A user object.
 		 */
-		getUser: function (uid, sid, ip, asynch) {
+		getUser: function (uid, sid, asynch) {
 			if (uid == undefined) uid = 0;
 			
 			var request = new XmlRpcRequest(config.host, "spi.getuser");
 			addHeader(request);
 			request.addParam(Number(uid));
 			if (sid != null) request.addParam(sid);
-			if (ip != null) request.addParam(ip);
 			
 			return applyRequest(request, function (data) {
 				return {uid:uid, sid:sid, name:data[0], avatar:data[1], gid:data[2], friendids:data[3], achievements:data[4], stats:data[5], microids:data[6]};
@@ -360,7 +358,7 @@ var SPI = function () {
 		 * @param {Number} uid The user's uid you want to set the statistic for.
 		 * @param {String} sid The user's sid.
 		 * @param {String} key The key for this statistic.
-		 * @param {String} value The value to set this statistic to.
+		 * @param {String} value The value to set this statistic to. Value must be a number if we are operating on a ranked (leaderboard) statistic.
 		 * @param [asynch] An optional object which contains both a response and error value which act as callbacks for asynchronous communication. If not specified then the call is synchronous.
 		 */
 		setStat: function (uid, sid, key, value, asynch) {
@@ -369,7 +367,7 @@ var SPI = function () {
 			request.addParam(Number(uid));
 			request.addParam(sid);
 			request.addParam(key);
-			request.addParam(value);
+			request.addParam(value.toString());
 			
 			return applyRequest(request, function (data) {
 				return null;
