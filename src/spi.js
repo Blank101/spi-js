@@ -241,7 +241,7 @@ var SPI = function () {
 	return 	{
 		//Api version number
 		
-		VERSION: "1.0",
+		VERSION: "1.1",
 		
 		//SPI Errors
 		
